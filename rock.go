@@ -149,22 +149,24 @@ func (gn *GFunction) pcall(L *LState , reg *registry , RA int , nargs int , nret
 
 	var ret LValue
 	args := argsPool.Get().(*Args)
+
 	if nargs <= 0 {
-		ret = gn.fn(L, nil)
-		reg.Set(RA, ret)
-		//reg.SetTop(RA + 1)
-		return
+		goto SET
 	}
 
 	for i := 1; i <= nargs; i++ {
 		args.Set( reg.Get(RA + i) )
 	}
 
-	reg.Set(RA, ret)
-	//reg.SetTop(RA + 1)
-
+SET:
+	ret = gn.fn(L , args)
 	args.reset()
 	argsPool.Put(args)
+
+	if nret != MultRet {
+		reg.Set(RA, ret)
+		reg.SetTop(RA + 1)
+	}
 }
 
 //防止过多的方法定义
