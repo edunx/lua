@@ -230,7 +230,7 @@ func (gn *GFunction) pcall(L *LState , reg *registry , RA int , nargs int ) {
 		L.RaiseError("invalid GFunction , got nil")
 		return
 	}
-	base := reg.Top() - nargs
+	base := L.GetTop() - nargs
 	rbase := base
 
 	//idx := RA + 1
