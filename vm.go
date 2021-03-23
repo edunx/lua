@@ -694,13 +694,14 @@ func init() {
 			lv := reg.Get(RA)
 			nret := C - 1
 
-			fmt.Printf("debug lbase: %d , A:%d , RA:%d , C:%d , nargs:%d , B:%d\n",
-				lbase , A , RA , C , nargs , B)
+			//fmt.Printf("debug lbase: %d , A:%d , RA:%d , C:%d , nargs:%d , B:%d\n",
+			//	lbase , A , RA , C , nargs , B)
 
-			for i:=1 ;i<=nargs;i++ {
-				fmt.Printf("reg.top:%d , reg:%d = %v , top-%d = %v\n" , top , RA , reg.Get(RA + i) , i -1 , reg.Get(top - i + 1))
-			}
+			//for i:=1 ;i<=nargs;i++ {
+			//	fmt.Printf("reg.top:%d , reg:%d = %v , top-%d = %v\n" , top , RA , reg.Get(RA + i) , i -1 , reg.Get(top - i + 1))
+			//}
 			//直接运行
+
 			if lv.Type() == LTGFunction {
 				lv.(*GFunction).pcall(L , reg , RA , nargs , nret)
 				return 0

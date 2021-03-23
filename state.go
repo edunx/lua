@@ -1209,7 +1209,7 @@ func (ls *LState) callR(nargs, nret, rbase int) {
 
 func (ls *LState) getField(obj LValue, key LValue) LValue {
 	if obj.Type() == LTLightUserData {
-		return obj.(*LightUserData).Value.LGet(ls , key)
+		return obj.(*LightUserData).Value.GetField(ls , key)
 	}
 
 	curobj := obj
@@ -1244,7 +1244,7 @@ func (ls *LState) getField(obj LValue, key LValue) LValue {
 
 func (ls *LState) getFieldString(obj LValue, key string) LValue {
 	if obj.Type() == LTLightUserData {
-		return obj.(*LightUserData).Value.LGet(ls , LString(key))
+		return obj.(*LightUserData).Value.Index(ls , key)
 	}
 
 	curobj := obj
@@ -1279,7 +1279,7 @@ func (ls *LState) getFieldString(obj LValue, key string) LValue {
 
 func (ls *LState) setField(obj LValue, key LValue, value LValue) {
 	if obj.Type() == LTLightUserData {
-		obj.(*LightUserData).Value.LSet(ls , key , value)
+		obj.(*LightUserData).Value.SetField(ls , key , value)
 		return
 	}
 	curobj := obj
@@ -1315,7 +1315,7 @@ func (ls *LState) setField(obj LValue, key LValue, value LValue) {
 
 func (ls *LState) setFieldString(obj LValue, key string, value LValue) {
 	if obj.Type() == LTLightUserData {
-		obj.(*LightUserData).Value.LSet(ls , LString(key) , value)
+		obj.(*LightUserData).Value.NewIndex(ls , key , value)
 		return
 	}
 

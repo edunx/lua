@@ -197,44 +197,6 @@ func (fn *LFunction) assertFloat64() (float64, bool)     { return 0, false }
 func (fn *LFunction) assertString() (string, bool)       { return "", false }
 func (fn *LFunction) assertFunction() (*LFunction, bool) { return fn, true}
 
-type GFunction struct {
-	fn    func(*LState , []LValue) LValue
-}
-
-func NewGFunction(fn func(*LState, []LValue ) LValue ) *GFunction {
-	return &GFunction{fn}
-}
-
-func (gn *GFunction) String() string                     { return fmt.Sprintf("function: %p", gn) }
-func (gn *GFunction) Type() LValueType                   { return LTGFunction}
-func (gn *GFunction) assertFloat64() (float64, bool)     { return 0, false   }
-func (gn *GFunction) assertString() (string, bool)       { return "", false  }
-func (gn *GFunction) assertFunction() (*LFunction, bool) { return nil, false }
-func (gn *GFunction) pcall(L *LState , reg *registry , RA int , nargs int , nret int) {
-
-	if gn.fn == nil {
-		L.RaiseError("invalid GFunction , got nil")
-		return
-	}
-
-	var ret LValue
-	if nargs <= 0 {
-		ret = gn.fn(L , nil)
-		reg.SetTop( RA )
-		return
-	}
-
-	args := make([]LValue , nargs)
-	for i := 1;i <= nargs ; i++ {
-		args[i - 1] = reg.Get(RA + i)
-	}
-
-	ret = gn.fn(L , args)
-	if nret != MultRet {
-		reg.Set(RA , ret)
-	}
-}
-
 type Global struct {
 	MainThread    *LState
 	CurrentThread *LState
@@ -246,78 +208,7 @@ type Global struct {
 	gccount    int32
 }
 
-type ExDataKV struct {
-	key       string
-	value     interface{}
-}
 
-type ExData  []ExDataKV
-
-func (ed *ExData) Set(key string , value interface{}) {
-	args := *ed
-
-	n := len(args)
-	for i := 0; i < n; i++ {
-		kv := &args[i]
-		if key == kv.key {
-			kv.value = value
-			return
-		}
-		if kv.key == "" {
-			kv.value = value
-			return
-		}
-	}
-
-	c := cap(args)
-	if c > n {
-		args = args[:n+1]
-		kv := &args[n]
-		kv.key = key
-
-		kv.value = value
-		*ed = args
-		return
-	}
-
-	kv := ExDataKV{}
-	kv.key = key
-	kv.value = value
-	*ed = append(args, kv)
-}
-
-func (ed *ExData) Get(key string )  interface{} {
-	args := *ed
-	n := len(args)
-	for i := 0; i < n; i++ {
-		kv := &args[i]
-		if key == kv.key {
-			return kv.value
-		}
-	}
-
-	return nil
-}
-
-func (ed *ExData) Del( key string ) {
-	args := *ed
-	n := len(args)
-	for i := 0 ; i < n ; i++ {
-		kv := &args[i]
-		if kv.key == key {
-			kv.key = ""
-			kv.value = nil
-			goto DONE
-		}
-	}
-
-DONE:
-	*ed = args
-}
-
-func (ed *ExData) Reset() {
-	*ed =(*ed)[:0]
-}
 
 type LState struct {
 	G       *Global
@@ -359,24 +250,6 @@ func (ud *LUserData) assertFloat64() (float64, bool)     { return 0, false }
 func (ud *LUserData) assertString() (string, bool)       { return "", false }
 func (ud *LUserData) assertFunction() (*LFunction, bool) { return nil, false }
 
-
-type LCallBack func( obj interface{} ) //用来回调方法
-type luaSetGetFunc  interface {
-	LSet(*LState , LValue, LValue )
-	LGet(*LState , LValue)  LValue
-	LCheck(interface{} , LCallBack) bool //check(obj interface{}, set func) bool
-}
-
-type LightUserData struct {
-	Value    luaSetGetFunc
-	fnExData ExData
-}
-
-func (ud *LightUserData) String() string                     { return fmt.Sprintf("userdata: %p", ud) }
-func (ud *LightUserData) Type() LValueType                   { return LTLightUserData}
-func (ud *LightUserData) assertFloat64() (float64, bool)     { return 0, false }
-func (ud *LightUserData) assertString() (string, bool)       { return "", false }
-func (ud *LightUserData) assertFunction() (*LFunction, bool) { return nil, false }
 
 
 type LChannel chan LValue
