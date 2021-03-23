@@ -127,6 +127,143 @@ func (a *Args) reset() {
 	*a = (*a)[:0]
 }
 
+func (a *Args) LGet(L *LState , idx int) LValue {
+	id := idx - 1
+	if id < 0 {
+		L.RaiseError("#%d not found")
+		return LNil
+	}
+
+	if id >= a.Len() {
+		L.RaiseError("#%d overflower" , idx)
+		return LNil
+	}
+
+	return (*a)[id]
+}
+
+func (a *Args) Int(L *LState , n int ) int {
+	v := L.Get(n)
+	if intv, ok := v.(LNumber); ok {
+		return int(intv)
+	}
+	L.TypeError(n, LTNumber)
+	return 0
+}
+
+func (a *Args) CheckAny(L *LState , n int) LValue {
+	return a.LGet(L ,n)
+}
+
+func (a *Args) CheckInt(L *LState , n int) int {
+	v := a.LGet(L , n)
+	if intv, ok := v.(LNumber); ok {
+		return int(intv)
+	}
+	L.TypeError(n, LTNumber)
+	return 0
+}
+
+func (a *Args) CheckIntOrDefault(L *LState , n int , d int) int {
+	v := a.LGet(L , n)
+	if intv, ok := v.(LNumber); ok {
+		return int(intv)
+	}
+
+	L.TypeError(n, LTNumber)
+	return d
+}
+
+func (a *Args) CheckInt64(L *LState , n int) int64 {
+	v := a.LGet(L , n)
+	if intv, ok := v.(LNumber); ok {
+		return int64(intv)
+	}
+	L.TypeError(n, LTNumber)
+	return 0
+}
+
+func (a *Args) CheckNumber(L *LState , n int) LNumber {
+	v := a.LGet(L , n)
+	if lv, ok := v.(LNumber); ok {
+		return lv
+	}
+	L.TypeError(n, LTNumber)
+	return 0
+}
+
+func (a *Args) CheckString(L *LState , n int) string {
+	v := a.LGet(L , n)
+	if lv, ok := v.(LString); ok {
+		return string(lv)
+	} else if LVCanConvToString(v) {
+		return LVAsString( v )
+	}
+	L.TypeError(n, LTString)
+	return ""
+}
+
+func (a *Args) CheckBool(L *LState , n int) bool {
+	v := a.LGet(L , n)
+	if lv, ok := v.(LBool); ok {
+		return bool(lv)
+	}
+	L.TypeError(n, LTBool)
+	return false
+}
+
+func (a *Args) CheckTable(L *LState , n int) *LTable {
+	v := a.LGet(L , n)
+	if lv, ok := v.(*LTable); ok {
+		return lv
+	}
+	L.TypeError(n, LTTable)
+	return nil
+}
+
+func (a *Args) CheckFunction(L *LState , n int) *LFunction {
+	v := a.LGet(L , n)
+	if lv, ok := v.(*LFunction); ok {
+		return lv
+	}
+	L.TypeError(n, LTFunction)
+	return nil
+}
+
+func (a *Args) CheckUserData(L *LState , n int) *LUserData {
+	v := a.LGet(L , n)
+	if lv, ok := v.(*LUserData); ok {
+		return lv
+	}
+	L.TypeError(n, LTUserData)
+	return nil
+}
+
+func (a *Args) CheckLightUserData(L *LState , n int) *LightUserData {
+	v := a.LGet(L , n)
+	if lv, ok := v.(*LightUserData); ok {
+		return lv
+	}
+	L.TypeError(n, LTLightUserData)
+	return nil
+}
+
+func (a *Args) CheckThread(L *LState , n int) *LState {
+	v := a.LGet(L , n)
+	if lv, ok := v.(*LState); ok {
+		return lv
+	}
+	L.TypeError(n, LTThread)
+	return nil
+}
+
+func (a *Args) CheckType(L *LState , n int, typ LValueType) {
+	v := a.LGet(L ,n)
+	if v.Type() != typ {
+		L.TypeError(n, typ)
+	}
+}
+
 type GFunction struct {
 	fn    func(*LState , *Args ) LValue
 }
