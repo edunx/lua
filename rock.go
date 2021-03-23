@@ -151,7 +151,7 @@ func (gn *GFunction) pcall(L *LState , reg *registry , RA int , nargs int , nret
 	args := argsPool.Get().(*Args)
 	if nargs <= 0 {
 		ret = gn.fn(L, nil)
-		reg.SetTop(RA)
+		reg.SetTop(RA - 1)
 		return
 	}
 
@@ -161,6 +161,7 @@ func (gn *GFunction) pcall(L *LState , reg *registry , RA int , nargs int , nret
 
 	if nret != MultRet {
 		reg.Set(RA, ret)
+		reg.SetTop(RA)
 	}
 
 	args.reset()
