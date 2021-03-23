@@ -697,6 +697,8 @@ func init() {
 				lbase , A , RA , C , nargs , B)
 			//直接运行
 			if lv.Type() == LTGFunction {
+				L.printCallStack()
+				L.printReg()
 				lv.(*GFunction).pcall(L , reg , RA , nargs)
 				return 0
 			}
