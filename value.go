@@ -226,7 +226,7 @@ func (gn *GFunction) pcall(L *LState , reg *registry , RA int , nargs int , nret
 
 	args := make([]LValue , nargs)
 	for i := 1;i < nargs ; i++ {
-		args[i] = reg.Get(RA + i)
+		args[i - 1] = reg.Get(RA + i)
 	}
 
 	ret = gn.fn(L , args)
