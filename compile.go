@@ -1166,9 +1166,9 @@ func compileFunctionExpr(context *funcContext, funcexpr *ast.FunctionExpr, ec *e
 func compileTableExpr(context *funcContext, reg int, ex *ast.TableExpr, ec *expcontext) { // {{{
 	code := context.Code
 	/*
-		tablereg := savereg(ec, Reg)
-		if tablereg == Reg {
-			Reg += 1
+		tablereg := savereg(ec, reg)
+		if tablereg == reg {
+			reg += 1
 		}
 	*/
 	tablereg := reg

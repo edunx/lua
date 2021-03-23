@@ -284,7 +284,7 @@ func strGsubFunc(L *LState, str string, repl *LFunction, matches []*pm.MatchData
 			nargs++
 		}
 		L.Call(nargs, 1)
-		ret := L.Reg.Pop()
+		ret := L.reg.Pop()
 		if !LVIsFalse(ret) {
 			infoList = append(infoList, replaceInfo{[]int{start, end}, LVAsString(ret)})
 		}

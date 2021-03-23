@@ -25,7 +25,7 @@ func (lv lValueArraySorter) Less(i, j int) bool {
 		lv.L.Push(lv.Values[i])
 		lv.L.Push(lv.Values[j])
 		lv.L.Call(2, 1)
-		return LVAsBool(lv.L.Reg.Pop())
+		return LVAsBool(lv.L.reg.Pop())
 	}
 	return lessThan(lv.L, lv.Values[i], lv.Values[j])
 }

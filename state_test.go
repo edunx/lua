@@ -475,7 +475,7 @@ func TestPCallAfterFail(t *testing.T) {
 func TestRegistryFixedOverflow(t *testing.T) {
 	state := NewState()
 	defer state.Close()
-	reg := state.Reg
+	reg := state.reg
 	expectedPanic := false
 	// should be non auto grow by default
 	errorIfFalse(t, reg.maxSize == 0, "state should default to non-auto growing implementation")
@@ -516,7 +516,7 @@ func TestRegistryAutoGrow(t *testing.T) {
 			t.Errorf("expected registry overflow exception, but didn't get panic")
 		}
 	}()
-	reg := state.Reg
+	reg := state.reg
 	test := LString("test")
 	for i := 0; i < 300; i++ {
 		reg.Push(test)

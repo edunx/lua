@@ -176,7 +176,7 @@ func baseLoad(L *LState) int {
 		L.SetTop(top)
 		L.Push(fn)
 		L.Call(0, 1)
-		ret := L.Reg.Pop()
+		ret := L.reg.Pop()
 		if ret == LNil {
 			break
 		} else if LVCanConvToString(ret) {
@@ -321,7 +321,7 @@ func baseSelect(L *LState) int {
 	switch lv := L.Get(1).(type) {
 	case LNumber:
 		idx := int(lv)
-		num := L.Reg.Top() - L.indexToReg(int(lv)) - 1
+		num := L.reg.Top() - L.indexToReg(int(lv)) - 1
 		if idx < 0 {
 			num++
 		}
@@ -543,7 +543,7 @@ func loRequire(L *LState) int {
 		L.Push(loader)
 		L.Push(LString(name))
 		L.Call(1, 1)
-		ret := L.Reg.Pop()
+		ret := L.reg.Pop()
 		switch retv := ret.(type) {
 		case *LFunction:
 			modasfunc = retv
@@ -557,7 +557,7 @@ loopbreak:
 	L.Push(modasfunc)
 	L.Push(LString(name))
 	L.Call(1, 1)
-	ret := L.Reg.Pop()
+	ret := L.reg.Pop()
 	modv := L.GetField(loaded, name)
 	if ret != LNil && modv == loopdetection {
 		L.SetField(loaded, name, ret)

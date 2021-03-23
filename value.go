@@ -219,7 +219,7 @@ type LState struct {
 	Options Options
 
 	stop         int32
-	Reg          *registry
+	reg          *registry
 	stack        callFrameStack
 	alloc        *allocator
 	currentFrame *callFrame
