@@ -307,10 +307,11 @@ SET:
 }
 
 //防止过多的方法定义
-type TLightUserData struct {}
-func (ud *TLightUserData) SetField(L *LState , key LValue, val LValue )  { }
-func (ud *TLightUserData) GetField(L *LState , key LValue) LValue        { return nil }
-func (ud *TLightUserData) Index(L *LState    ,key string ) LValue        { return nil }
+type Super struct {}
+func (s *Super) SetField(L *LState , key LValue, val LValue )  { }
+func (s *Super) GetField(L *LState , key LValue) LValue        { return nil }
+func (s *Super) Index(L *LState    ,key string ) LValue        { return nil }
 
-func (ud *TLightUserData) NewIndex(L *LState , key string , val LValue)  { }
-func (ud *TLightUserData) LCheck(obj interface{} , set LCallBack)  bool  { return false }
+func (s *Super) NewIndex(L *LState , key string , val LValue)  { }
+func (s *Super) LCheck(obj interface{} , set LCallBack)  bool  { return false }
+func (s *Super) ToUserData(L *LState ) *LightUserData          { return nil }
