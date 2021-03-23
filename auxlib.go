@@ -400,10 +400,10 @@ func (ls *LState) GetTypeMetatable(typ string) LValue {
 func (ls *LState) CallMeta(obj LValue, event string) LValue {
 	op := ls.metaOp1(obj, event)
 	if op.Type() == LTFunction {
-		ls.reg.Push(op)
-		ls.reg.Push(obj)
+		ls.Reg.Push(op)
+		ls.Reg.Push(obj)
 		ls.Call(1, 1)
-		return ls.reg.Pop()
+		return ls.Reg.Pop()
 	}
 	return LNil
 }
@@ -485,7 +485,7 @@ func (ls *LState) ToStringMeta(lv LValue) LValue {
 		ls.Push(fn)
 		ls.Push(lv)
 		ls.Call(1, 1)
-		return ls.reg.Pop()
+		return ls.Reg.Pop()
 	} else {
 		return LString(lv.String())
 	}

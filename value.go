@@ -198,26 +198,11 @@ func (fn *LFunction) assertString() (string, bool)       { return "", false }
 func (fn *LFunction) assertFunction() (*LFunction, bool) { return fn, true}
 
 type GFunction struct {
-	fn     interface{}
-	nret   int
-	//gn   func(*LState , int) LValue
+	fn    func(*LState , []LValue) LValue
 }
 
-func NewGFunction(fn interface{} ) *GFunction {
-	switch fn.(type) {
-	case func(*LState , int):
-		return &GFunction{fn:fn , nret: 0}
-
-	case func(*LState , int) LValue:
-		return &GFunction{fn:fn , nret: 1}
-
-	case func(*LState , int) (LValue , LValue):
-		return &GFunction{fn:fn , nret: 2}
-
-	case func(*LState ,int ) (LValue , LValue , LValue):
-		return &GFunction{fn:nil , nret:-1}
-	}
-	return nil
+func NewGFunction(fn func(*LState, []LValue ) LValue ) *GFunction {
+	return &GFunction{fn}
 }
 
 func (gn *GFunction) String() string                     { return fmt.Sprintf("function: %p", gn) }
@@ -225,61 +210,29 @@ func (gn *GFunction) Type() LValueType                   { return LTGFunction}
 func (gn *GFunction) assertFloat64() (float64, bool)     { return 0, false   }
 func (gn *GFunction) assertString() (string, bool)       { return "", false  }
 func (gn *GFunction) assertFunction() (*LFunction, bool) { return nil, false }
-func (gn *GFunction) pcall(L *LState , reg *registry , RA int , nargs int ) {
+func (gn *GFunction) pcall(L *LState , reg *registry , RA int , nargs int , nret int) {
+
 	if gn.fn == nil {
 		L.RaiseError("invalid GFunction , got nil")
 		return
 	}
-	base := reg.top - nargs - 1
-	rbase := base
 
-	//idx := RA + 1
-	switch gn.nret {
-	case 0:
-		fn , ok := gn.fn.(func(*LState , int))
-		if ok {
-			fn(L , base)
-			reg.SetTop(rbase )
-			return
-		}
-		L.RaiseError("invalid GFunction=>func(*LState , int), nret=0")
-
-	case 1:
-		fn , ok := gn.fn.(func(*LState , int) LValue)
-		if ok {
-			reg.Set(RA , fn(L , base + 1))
-			reg.SetTop(rbase + 1)
-			return
-		}
-		L.RaiseError("invalid GFunction=>func(*LState , int) LValue, nret=1")
-
-	case 2:
-		fn , ok := gn.fn.(func(*LState , int) (LValue , LValue ))
-		if ok {
-			v1 , v2 := fn(L , base + 1)
-			reg.Set(RA , v1)
-			reg.Set(RA+1 , v2)
-			reg.SetTop(rbase + 2)
-			return
-		}
-		L.RaiseError("invalid GFunction=>func(*LState , int) (LValue ,LValue), nret=2")
-
-	case 3:
-		fn , ok := gn.fn.(func(*LState , int) (LValue , LValue , LValue))
-		if ok {
-			v1 , v2 , v3 := fn(L , base + 1)
-			reg.Set(RA , v1)
-			reg.Set(RA+1 , v2)
-			reg.Set(RA+2 , v3)
-			reg.SetTop(rbase + 3)
-			return
-		}
-		L.RaiseError("invalid GFunction=>func(*LState , int) (LValue ,LValue , LValue), nret=3")
-
-	default:
-		L.RaiseError("invalid GFunction , %v" , gn.fn)
+	var ret LValue
+	if nargs <= 0 {
+		ret = gn.fn(L , nil)
+		reg.SetTop( RA )
+		return
 	}
 
+	args := make([]LValue , nargs)
+	for i := 1;i < nargs ; i++ {
+		args[i] = reg.Get(RA + i)
+	}
+
+	ret = gn.fn(L , args)
+	if nret != MultRet {
+		reg.Set(RA , ret)
+	}
 }
 
 type Global struct {
@@ -375,7 +328,7 @@ type LState struct {
 	Options Options
 
 	stop         int32
-	reg          *registry
+	Reg          *registry
 	stack        callFrameStack
 	alloc        *allocator
 	currentFrame *callFrame
