@@ -695,13 +695,11 @@ func init() {
 
 			fmt.Printf("debug lbase: %d , A:%d , RA:%d , C:%d , nargs:%d , B:%d\n",
 				lbase , A , RA , C , nargs , B)
-			for i:=0;i<nargs;i++{
-				fmt.Printf("v-0: %v\n" , reg.Get(RA + i))
+			for i:=1;i<=nargs;i++{
+				fmt.Printf("v-%d: %v\n" , i , reg.Get(RA + i))
 			}
 			//直接运行
 			if lv.Type() == LTGFunction {
-				L.printCallStack()
-				L.printReg()
 				lv.(*GFunction).pcall(L , reg , RA , nargs)
 				return 0
 			}
