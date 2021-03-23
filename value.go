@@ -225,17 +225,21 @@ func (gn *GFunction) Type() LValueType                   { return LTGFunction}
 func (gn *GFunction) assertFloat64() (float64, bool)     { return 0, false   }
 func (gn *GFunction) assertString() (string, bool)       { return "", false  }
 func (gn *GFunction) assertFunction() (*LFunction, bool) { return nil, false }
-func (gn *GFunction) pcall(L *LState , reg *registry , RA int , lbase int ) {
+func (gn *GFunction) pcall(L *LState , reg *registry , RA int , nargs int ) {
 	if gn.fn == nil {
 		L.RaiseError("invalid GFunction , got nil")
 		return
 	}
-	idx := RA + 1
+	base := reg.Top() - nargs
+	rbase := base
+
+	//idx := RA + 1
 	switch gn.nret {
 	case 0:
 		fn , ok := gn.fn.(func(*LState , int))
 		if ok {
-			fn(L , idx)
+			fn(L , base + 1)
+			reg.SetTop(rbase)
 			return
 		}
 		L.RaiseError("invalid GFunction=>func(*LState , int), nret=0")
@@ -243,8 +247,8 @@ func (gn *GFunction) pcall(L *LState , reg *registry , RA int , lbase int ) {
 	case 1:
 		fn , ok := gn.fn.(func(*LState , int) LValue)
 		if ok {
-			reg.Set(RA , fn(L , idx))
-			reg.SetTop(idx)
+			reg.Set(RA , fn(L , base + 1))
+			reg.SetTop(rbase + 1)
 			return
 		}
 		L.RaiseError("invalid GFunction=>func(*LState , int) LValue, nret=1")
@@ -252,10 +256,10 @@ func (gn *GFunction) pcall(L *LState , reg *registry , RA int , lbase int ) {
 	case 2:
 		fn , ok := gn.fn.(func(*LState , int) (LValue , LValue ))
 		if ok {
-			v1 , v2 := fn(L , idx)
+			v1 , v2 := fn(L , base + 1)
 			reg.Set(RA , v1)
 			reg.Set(RA+1 , v2)
-			reg.SetTop(idx + 1)
+			reg.SetTop(rbase + 2)
 			return
 		}
 		L.RaiseError("invalid GFunction=>func(*LState , int) (LValue ,LValue), nret=2")
@@ -263,11 +267,11 @@ func (gn *GFunction) pcall(L *LState , reg *registry , RA int , lbase int ) {
 	case 3:
 		fn , ok := gn.fn.(func(*LState , int) (LValue , LValue , LValue))
 		if ok {
-			v1 , v2 , v3 := fn(L , idx)
+			v1 , v2 , v3 := fn(L , base + 1)
 			reg.Set(RA , v1)
 			reg.Set(RA+1 , v2)
 			reg.Set(RA+2 , v3)
-			reg.SetTop(idx + 2)
+			reg.SetTop(rbase + 3)
 			return
 		}
 		L.RaiseError("invalid GFunction=>func(*LState , int) (LValue ,LValue , LValue), nret=3")
