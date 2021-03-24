@@ -300,7 +300,7 @@ SET:
 	args.reset()
 	argsPool.Put(args)
 
-	if nret != MultRet {
+	if ret != nil {
 		reg.Set(RA, ret)
 		reg.SetTop(RA + 1)
 	}
