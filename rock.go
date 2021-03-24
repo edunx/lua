@@ -302,7 +302,7 @@ SET:
 
 	if ret != nil {
 		reg.Set(RA, ret)
-		reg.SetTop(RA + nret)
+		reg.SetTop(RA + 1)
 	}
 }
 
