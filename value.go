@@ -20,9 +20,10 @@ const (
 	LTChannel
 	LTLightUserData
 	LTGFunction
+	LTKEYVAL
 )
 
-var lValueNames = [12]string{"nil", "boolean", "number", "string", "function", "userdata", "thread", "table", "channel" , "ligthuserdata"  , "GFunction"}
+var lValueNames = [13]string{"nil", "boolean", "number", "string", "function", "userdata", "thread", "table", "channel" , "ligthuserdata"  , "GFunction" , "userKV"}
 
 func (vt LValueType) String() string {
 	return lValueNames[int(vt)]

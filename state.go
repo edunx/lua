@@ -1243,8 +1243,11 @@ func (ls *LState) getField(obj LValue, key LValue) LValue {
 }
 
 func (ls *LState) getFieldString(obj LValue, key string) LValue {
-	if obj.Type() == LTLightUserData {
+	switch obj.Type() {
+	case LTLightUserData:
 		return obj.(*LightUserData).Value.Index(ls , key)
+	case LTKEYVAL:
+		return obj.(*UserKV).Get(key)
 	}
 
 	curobj := obj
@@ -1314,8 +1317,12 @@ func (ls *LState) setField(obj LValue, key LValue, value LValue) {
 }
 
 func (ls *LState) setFieldString(obj LValue, key string, value LValue) {
-	if obj.Type() == LTLightUserData {
+	switch obj.Type() {
+	case LTLightUserData:
 		obj.(*LightUserData).Value.NewIndex(ls , key , value)
+		return
+	case LTKEYVAL:
+		obj.(*UserKV).Set(key , value)
 		return
 	}
 

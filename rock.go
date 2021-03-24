@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sync"
 )
+
 type ExDataKV struct {
 	key       string
 	value     interface{}
@@ -76,6 +77,62 @@ DONE:
 func (ed *ExData) Reset() {
 	*ed =(*ed)[:0]
 }
+
+type ExUserKV struct {
+	key string
+	val LValue
+}
+
+type UserKV []ExUserKV
+func (ukv *UserKV) Set(key string , val LValue ) {
+	args := *ukv
+
+	n := len(args)
+	for i := 0; i < n; i++ {
+		kv := &args[i]
+		if key == kv.key {
+			kv.val = val
+			return
+		}
+		if kv.key == "" {
+			kv.val = val
+			return
+		}
+	}
+
+	c := cap(args)
+	if c > n {
+		args = args[:n+1]
+		kv := &args[n]
+		kv.key = key
+
+		kv.val = val
+		*ukv = args
+		return
+	}
+
+	kv := ExUserKV{}
+	kv.key = key
+	kv.val = val
+	*ukv = append(args, kv)
+}
+func (ukv *UserKV) Get(key string) LValue {
+	args := *ukv
+	n := len(args)
+	for i := 0; i < n; i++ {
+		kv := &args[i]
+		if key == kv.key {
+			return kv.val
+		}
+	}
+	return LNil
+}
+
+func (ukv *UserKV) String() string                     { return fmt.Sprintf("function: %p", ukv) }
+func (ukv *UserKV) Type() LValueType                   { return LTKEYVAL}
+func (ukv *UserKV) assertFloat64() (float64, bool)     { return 0, false   }
+func (ukv *UserKV) assertString() (string, bool)       { return "", false  }
+func (ukv *UserKV) assertFunction() (*LFunction, bool) { return nil, false }
 
 
 type LCallBack func( obj interface{} ) //用来回调方法
