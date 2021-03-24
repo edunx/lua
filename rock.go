@@ -366,9 +366,9 @@ SET:
 //防止过多的方法定义
 type Super struct {}
 func (s *Super) SetField(L *LState , key LValue, val LValue )  { }
-func (s *Super) GetField(L *LState , key LValue) LValue        { return nil }
-func (s *Super) Index(L *LState    ,key string ) LValue        { return nil }
+func (s *Super) GetField(L *LState , key LValue) LValue        { return LNil }
+func (s *Super) Index(L *LState    ,key string ) LValue        { return LNil }
 
 func (s *Super) NewIndex(L *LState , key string , val LValue)  { }
 func (s *Super) LCheck(obj interface{} , set LCallBack)  bool  { return false }
-func (s *Super) ToLightUserData(L *LState ) *LightUserData     { return nil }
+func (s *Super) ToLightUserData(L *LState ) *LightUserData     { return L.NewLightUserData(s) }
