@@ -172,7 +172,7 @@ func (ud *LightUserData) assertFloat64() (float64, bool)     { return 0, false  
 func (ud *LightUserData) assertString() (string, bool)       { return "", false        }
 func (ud *LightUserData) assertFunction() (*LFunction, bool) { return nil, false       }
 func (ud *LightUserData) Get(key string) interface{}         { return ud.ctx.Get(key)  }
-func (ud *LightUserData) set(key string , v interface{} )    { ud.ctx.Set(key , v)     }
+func (ud *LightUserData) Set(key string , v interface{} )    { ud.ctx.Set(key , v)     }
 
 type Args []LValue
 var argsPool = &sync.Pool{
