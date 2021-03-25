@@ -1,8 +1,14 @@
 package lua
 
 import (
+	"errors"
 	"fmt"
 	"sync"
+)
+
+var (
+	rock_not_found error = errors.New("not found")
+	rock_json_null = []byte("null")
 )
 
 type ExDataKV struct {
@@ -136,25 +142,37 @@ func (ukv *UserKV) assertFunction() (*LFunction, bool) { return nil, false }
 
 
 type LCallBack func( obj interface{} ) //用来回调方法
-type luaSetGetFunc  interface {
+type rock  interface {
+	Close()
+	Start() error
+
+	Write( interface{} ) error
+	Read() ([]byte , error)
+	Type() string
+	Json() []byte
+
 	SetField(*LState   , LValue, LValue )
 	GetField(*LState   , LValue)  LValue
+
 	Index(*LState      , string) LValue
 	NewIndex(*LState   , string , LValue)
+
 	LCheck(interface{} , LCallBack) bool //check(obj interface{}, set func) bool
 	ToLightUserData(*LState) *LightUserData
 }
 
 type LightUserData struct {
-	Value    luaSetGetFunc
-	fnExData ExData
+	Value    rock
+	ctx      ExData
 }
 
 func (ud *LightUserData) String() string                     { return fmt.Sprintf("userdata: %p", ud) }
 func (ud *LightUserData) Type() LValueType                   { return LTLightUserData}
-func (ud *LightUserData) assertFloat64() (float64, bool)     { return 0, false }
-func (ud *LightUserData) assertString() (string, bool)       { return "", false }
-func (ud *LightUserData) assertFunction() (*LFunction, bool) { return nil, false }
+func (ud *LightUserData) assertFloat64() (float64, bool)     { return 0, false         }
+func (ud *LightUserData) assertString() (string, bool)       { return "", false        }
+func (ud *LightUserData) assertFunction() (*LFunction, bool) { return nil, false       }
+func (ud *LightUserData) Get(key string) interface{}         { return ud.ctx.Get(key)  }
+func (ud *LightUserData) set(key string , v interface{} )    { ud.ctx.Set(key , v)     }
 
 type Args []LValue
 var argsPool = &sync.Pool{
@@ -367,8 +385,23 @@ SET:
 type Super struct {}
 func (s *Super) SetField(L *LState , key LValue, val LValue )  { }
 func (s *Super) GetField(L *LState , key LValue) LValue        { return LNil }
-func (s *Super) Index(L *LState    ,key string ) LValue        { return LNil }
 
+func (s *Super) Index(L *LState    ,key string ) LValue        { return LNil }
 func (s *Super) NewIndex(L *LState , key string , val LValue)  { }
+
 func (s *Super) LCheck(obj interface{} , set LCallBack)  bool  { return false }
 func (s *Super) ToLightUserData(L *LState ) *LightUserData     { return L.NewLightUserData(s) }
+
+func (s *Super) Type() string                          { return "super"}
+func (s *Super) Close()                                {  }
+func (s *Super) Start() error                          { return rock_not_found }
+func (s *Super) Write( v interface{} ) error           { return rock_not_found }
+func (s *Super) Read( v interface{} ) ([]byte , error) { return nil , rock_not_found }
+func (s *Super) JSON( ) []byte                         { return rock_json_null }
+
+func IsNotFound( err error ) bool {
+	if err.Error() == "not found" {
+		return true
+	}
+	return false
+}
