@@ -11,6 +11,11 @@ var (
 	rock_json_null = []byte("null")
 )
 
+type Message interface {
+	Byte() []byte
+}
+
+
 type ExDataKV struct {
 	key       string
 	value     interface{}
@@ -142,12 +147,9 @@ func (ukv *UserKV) assertFunction() (*LFunction, bool) { return nil, false }
 
 
 type LCallBack func( obj interface{} ) //用来回调方法
-type rock  interface {
-	Close()
-	Start() error
 
-	Write( interface{} ) error
-	Read() ([]byte , error)
+type rock  interface {
+	Name() string
 	Type() string
 	Json() []byte
 
@@ -159,6 +161,14 @@ type rock  interface {
 
 	LCheck(interface{} , LCallBack) bool //check(obj interface{}, set func) bool
 	ToLightUserData(*LState) *LightUserData
+}
+
+type IO interface {
+	rock
+	Close()
+	Start() error
+	Write(interface{}) error
+	Read() ([]byte , error )
 }
 
 type LightUserData struct {
@@ -392,6 +402,7 @@ func (s *Super) NewIndex(L *LState , key string , val LValue)  { }
 func (s *Super) LCheck(obj interface{} , set LCallBack)  bool  { return false }
 func (s *Super) ToLightUserData(L *LState ) *LightUserData     { return L.NewLightUserData(s) }
 
+func (s *Super) Name() string                          { return "super"}
 func (s *Super) Type() string                          { return "super"}
 func (s *Super) Close()                                {  }
 func (s *Super) Start() error                          { return rock_not_found }
