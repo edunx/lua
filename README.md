@@ -91,31 +91,34 @@
 - 结构定义如下
 ```go
     type LCallBack  func( interface{} ) // 用于Lcheck方法 满足传进来的obj 数据类型后 会把执行回调
+    type rock interface {
+        Close()
+        Start() error
 
-    type luaSetGetFunc  interface {
+        Write( interface{} ) error
+        Read() ([]byte , error)
+        Type() string
+        Json() []byte
+
         SetField(*LState   , LValue, LValue )
         GetField(*LState   , LValue)  LValue
+
         Index(*LState      , string) LValue
         NewIndex(*LState   , string , LValue)
+
         LCheck(interface{} , LCallBack) bool //check(obj interface{}, set func) bool
         ToLightUserData(*LState) *LightUserData
     }
     
     type LightUserData struct {
-        Value lusSetGetFunc 	
+        Value   rock 
         //other
     } 
     
     type Super struct {}
     //防止过多的方法定义
 	//为了防止过多方法定义可以先继承super
-    func (s *Super) SetField(L *LState , key LValue, val LValue )  { }
-    func (s *Super) GetField(L *LState , key LValue) LValue        { return LNil }
-    func (s *Super) Index(L *LState    ,key string ) LValue        { return LNil }
-
-    func (s *Super) NewIndex(L *LState , key string , val LValue)  { }
-    func (s *Super) LCheck(obj interface{} , set LCallBack)  bool  { return false }
-    func (s *Super) ToLightUserData(L *LState ) *LightUserData     { return L.NewLightUserData(s) }
+    //定义rock所有的方法   
 ```
 
 - 示例

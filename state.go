@@ -1592,7 +1592,7 @@ func (ls *LState) NewUserData() *LUserData {
 	}
 }
 
-func (ls *LState) NewLightUserData( ud luaSetGetFunc ) *LightUserData {
+func (ls *LState) NewLightUserData( ud rock ) *LightUserData {
 	return &LightUserData{ Value: ud }
 }
 
