@@ -448,3 +448,20 @@ func (tb *LTable) CheckSockets(key string , L *LState) string {
 
     return v
 }
+
+func (tb *LTable) CheckIO( L *LState , key string ) IO {
+	data := tb.RawGetString(key)
+	ud , ok := data.(*LightUserData)
+	if !ok {
+		L.RaiseError("%s not LightUserData" , key)
+		return nil
+	}
+
+	v , ok := ud.Value.(IO)
+	if ok {
+		return v
+	}
+
+	L.RaiseError("%s not IO" , key)
+	return nil
+}

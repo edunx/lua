@@ -184,6 +184,15 @@ func (ud *LightUserData) assertFunction() (*LFunction, bool) { return nil, false
 func (ud *LightUserData) Get(key string) interface{}         { return ud.ctx.Get(key)  }
 func (ud *LightUserData) Set(key string , v interface{} )    { ud.ctx.Set(key , v)     }
 
+func (ud *LightUserData) CheckIO( L *LState ) IO {
+	v , ok := ud.Value.(IO)
+	if ok {
+		return v
+	}
+	L.RaiseError("%s not IO , got: %s" , ud.Value.Name() , ud.Value.Type())
+	return nil
+}
+
 type Args []LValue
 var argsPool = &sync.Pool{
 	New: func() interface {} { return &Args{} },

@@ -25,6 +25,7 @@
     <list default="true" id="b135304e-292e-4bc0-b6e3-ee41cc76824b" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/rock.go" beforeDir="false" afterPath="$PROJECT_DIR$/rock.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/table.go" beforeDir="false" afterPath="$PROJECT_DIR$/table.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -113,7 +114,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
           <url>file://$PROJECT_DIR$/rock.go</url>
-          <line>98</line>
+          <line>97</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
       </breakpoints>
