@@ -397,7 +397,7 @@ func (s *Super) Close()                                {  }
 func (s *Super) Start() error                          { return rock_not_found }
 func (s *Super) Write( v interface{} ) error           { return rock_not_found }
 func (s *Super) Read( v interface{} ) ([]byte , error) { return nil , rock_not_found }
-func (s *Super) JSON( ) []byte                         { return rock_json_null }
+func (s *Super) Json( ) []byte                         { return rock_json_null }
 
 func IsNotFound( err error ) bool {
 	if err.Error() == "not found" {
