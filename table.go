@@ -450,12 +450,7 @@ func (tb *LTable) CheckSockets(key string , L *LState) string {
 }
 
 func (tb *LTable) CheckIO( L *LState , key string ) IO {
-	data := tb.RawGetString(key)
-	ud , ok := data.(*LightUserData)
-	if !ok {
-		L.RaiseError("%s not LightUserData" , key)
-		return nil
-	}
+	ud := tb.CheckLightUserData(L , key)
 
 	v , ok := ud.Value.(IO)
 	if ok {
@@ -464,4 +459,14 @@ func (tb *LTable) CheckIO( L *LState , key string ) IO {
 
 	L.RaiseError("%s not IO" , key)
 	return nil
+}
+
+func (tb *LTable) CheckLightUserData( L *LState , key string ) *LightUserData {
+	data := tb.RawGetString(key)
+	if data.Type() != LTLightUserData {
+		return nil
+	}
+
+	L.RaiseError("invalid type , %s must be userdata , got %s" , key , data.Type().String())
+	return data.(*LightUserData)
 }

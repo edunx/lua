@@ -342,6 +342,18 @@ func (a *Args) CheckLightUserData(L *LState , n int) *LightUserData {
 	return nil
 }
 
+func (a *Args) CheckIO(L *LState , n int) IO {
+	ud := a.CheckLightUserData( L , n )
+
+	v , ok := ud.Value.(IO)
+	if ok {
+		return v
+	}
+
+	L.RaiseError("#%d must be IO , got fail" , n)
+	return nil
+}
+
 func (a *Args) CheckThread(L *LState , n int) *LState {
 	v := a.LGet(L , n)
 	if lv, ok := v.(*LState); ok {
