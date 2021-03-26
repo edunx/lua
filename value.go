@@ -230,7 +230,14 @@ type LState struct {
 	mainLoop     func(*LState, *callFrame)
 	ctx          context.Context
 
-	ExData   ExData
+	ExData       ExData
+
+	//预留直接访问的OBJ对象
+	A            interface{}
+	B            interface{}
+	C            interface{}
+	D            interface{}
+	E            interface{}
 }
 
 func (ls *LState) String() string                     { return fmt.Sprintf("thread: %p", ls) }

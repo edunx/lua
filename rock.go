@@ -15,7 +15,6 @@ type Message interface {
 	Byte() []byte
 }
 
-
 type ExDataKV struct {
 	key       string
 	value     interface{}
