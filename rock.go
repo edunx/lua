@@ -164,7 +164,7 @@ type rock  interface {
 
 type IO interface {
 	rock
-	Close()
+	Close() error
 	Start() error
 	Write(interface{}) error
 	Read() ([]byte , error )
@@ -235,13 +235,9 @@ func (a *Args) LGet(L *LState , idx int) LValue {
 	return (*a)[id]
 }
 
-
-
 type GFunction struct {
 	fn    func(*LState , *Args ) LValue
 }
-
-
 
 func (gn *GFunction) String() string                     { return fmt.Sprintf("function: %p", gn) }
 func (gn *GFunction) Type() LValueType                   { return LTGFunction}
