@@ -1,14 +1,8 @@
 package lua
 
 import (
-	"errors"
 	"fmt"
 	"sync"
-)
-
-var (
-	rock_not_found error = errors.New("not found")
-	rock_json_null = []byte("null")
 )
 
 type Message interface {

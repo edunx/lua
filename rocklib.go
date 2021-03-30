@@ -1,5 +1,43 @@
 package lua
 
+import "errors"
+
+var ERR = errors.New("not function")
+var NULL = []byte("")
+
+//防止过多的方法定义
+type Super struct {}
+func (s *Super) SetField(L *LState , key LValue, val LValue )  { }
+func (s *Super) GetField(L *LState , key LValue) LValue        { return LNil }
+
+func (s *Super) Index(L *LState    ,key string ) LValue        { return LNil }
+func (s *Super) NewIndex(L *LState , key string , val LValue)  { }
+
+func (s *Super) LCheck(obj interface{} , set LCallBack)  bool  { return false }
+func (s *Super) ToLightUserData(L *LState ) *LightUserData     { return L.NewLightUserData(s) }
+
+func (s *Super) Name() string                          { return "super"        }
+func (s *Super) Type() string                          { return "super"        }
+func (s *Super) Close() error                          { return ERR            }
+func (s *Super) Start() error                          { return ERR            }
+func (s *Super) Write( v interface{} ) error           { return ERR            }
+func (s *Super) Read() ([]byte , error)                { return nil , ERR      }
+func (s *Super) Json( ) ([]byte , error)               { return nil , ERR      }
+
+func IsNotFound( err error ) bool {
+	if err.Error() == "not found" {
+		return true
+	}
+	return false
+}
+
+func IsNull(v []byte) bool {
+	if len(v) == 0 {
+		return true
+	}
+	return false
+}
+
 func (a *Args) Int(L *LState , n int ) int {
 	v := L.Get(n)
 	if intv, ok := v.(LNumber); ok {
@@ -138,31 +176,6 @@ func NewGFunction(fn func(*LState, *Args ) LValue ) *GFunction {
 	return &GFunction{fn }
 }
 
-//防止过多的方法定义
-type Super struct {}
-func (s *Super) SetField(L *LState , key LValue, val LValue )  { }
-func (s *Super) GetField(L *LState , key LValue) LValue        { return LNil }
-
-func (s *Super) Index(L *LState    ,key string ) LValue        { return LNil }
-func (s *Super) NewIndex(L *LState , key string , val LValue)  { }
-
-func (s *Super) LCheck(obj interface{} , set LCallBack)  bool  { return false }
-func (s *Super) ToLightUserData(L *LState ) *LightUserData     { return L.NewLightUserData(s) }
-
-func (s *Super) Name() string                          { return "super"}
-func (s *Super) Type() string                          { return "super"}
-func (s *Super) Close()                                {  }
-func (s *Super) Start() error                          { return rock_not_found }
-func (s *Super) Write( v interface{} ) error           { return rock_not_found }
-func (s *Super) Read() ([]byte , error)                { return nil , rock_not_found }
-func (s *Super) Json( ) []byte                         { return rock_json_null }
-
-func IsNotFound( err error ) bool {
-	if err.Error() == "not found" {
-		return true
-	}
-	return false
-}
 
 func CheckInt(L *LState , lv LValue) int {
 	if intv, ok := lv.(LNumber); ok {
