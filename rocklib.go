@@ -22,7 +22,7 @@ func (s *Super) Close() error                          { return ERR            }
 func (s *Super) Start() error                          { return ERR            }
 func (s *Super) Write( v interface{} ) error           { return ERR            }
 func (s *Super) Read() ([]byte , error)                { return nil , ERR      }
-func (s *Super) Json( ) ([]byte , error)               { return nil , ERR      }
+func (s *Super) Json() ([]byte , error)                { return nil , ERR      }
 
 func IsNotFound( err error ) bool {
 	if err.Error() == "not found" {

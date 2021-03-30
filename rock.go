@@ -144,7 +144,7 @@ type LCallBack func( obj interface{} ) //用来回调方法
 type rock  interface {
 	Name() string
 	Type() string
-	Json() []byte
+	Json() ([]byte , error)
 
 	SetField(*LState   , LValue, LValue )
 	GetField(*LState   , LValue)  LValue
