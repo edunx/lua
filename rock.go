@@ -142,9 +142,10 @@ func (ukv *UserKV) assertFunction() (*LFunction, bool) { return nil, false }
 type LCallBack func( obj interface{} ) //用来回调方法
 
 type rock  interface {
-	Name() string
-	Type() string
-	Json() ([]byte , error)
+	Name()     string
+	Type()     string
+	ToJson()   ([]byte , error)
+	Status()   (string , error)
 
 	SetField(*LState   , LValue, LValue )
 	GetField(*LState   , LValue)  LValue

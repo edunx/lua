@@ -23,6 +23,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b135304e-292e-4bc0-b6e3-ee41cc76824b" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/rock.go" beforeDir="false" afterPath="$PROJECT_DIR$/rock.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/rocklib.go" beforeDir="false" afterPath="$PROJECT_DIR$/rocklib.go" afterDir="false" />
     </list>
