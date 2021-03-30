@@ -90,6 +90,10 @@ func (jb *jsonBuffer) WriteKO(key string , obj interface{ Name() string } , end 
 	jb.buff.WriteByte(',')
 }
 
+func (jb *jsonBuffer) Bytes() []byte {
+	return jb.buff.Bytes()
+}
+
 func (jb *jsonBuffer) Start( name string ) {
 	jb.buff.WriteByte('{')
 	jb.WriteKey(name)
