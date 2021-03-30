@@ -1,9 +1,108 @@
 package lua
 
-import "errors"
+import (
+	"bytes"
+	"errors"
+	"reflect"
+	"strconv"
+	"unsafe"
+)
 
 var ERR = errors.New("not function")
 var NULL = []byte("")
+
+//JSON
+type jsonBuffer struct {
+	buff bytes.Buffer
+}
+
+func (jb *jsonBuffer) Write( v []byte ) {
+	len := len(v)
+	var ch byte
+	for i := 0;i<len;i++ {
+		ch = v[i]
+		switch ch {
+		case '"':
+			jb.buff.WriteByte('\\')
+			jb.buff.WriteByte('"')
+		case '\\':
+			jb.buff.WriteByte('\\')
+			jb.buff.WriteByte('\\')
+		case '\r':
+			jb.buff.WriteByte('\\')
+			jb.buff.WriteByte('r')
+		case '\n':
+			jb.buff.WriteByte('\\')
+			jb.buff.WriteByte('n')
+		case '\t':
+			jb.buff.WriteByte('\\')
+			jb.buff.WriteByte('t')
+		default:
+			jb.buff.WriteByte(ch)
+		}
+	}
+}
+
+func (jb *jsonBuffer) WriteKey(key string) {
+	jb.buff.WriteByte('"')
+	jb.Write(S2B(key))
+	jb.buff.WriteByte('"')
+	jb.buff.WriteByte(':')
+}
+
+func (jb *jsonBuffer) WriteVal(val string) {
+	jb.buff.WriteByte('"')
+	jb.Write(S2B(val))
+	jb.buff.WriteByte('"')
+}
+
+func (jb *jsonBuffer) WriteInt(val int) {
+	jb.buff.WriteString(strconv.Itoa(val))
+}
+
+//写 key: val
+func (jb *jsonBuffer) WriteKV(key string , val string , end bool) {
+	jb.WriteKey(key)
+	jb.WriteVal(val)
+
+	if end { return }
+
+	jb.buff.WriteByte(',')
+}
+
+//写 key: int
+func (jb *jsonBuffer) WriteKI(key string , val int , end bool) {
+	jb.WriteKey(key)
+	jb.WriteInt(val)
+	if end { return }
+	jb.buff.WriteByte(',')
+}
+
+//写 key: OBJ
+func (jb *jsonBuffer) WriteKO(key string , obj interface{ Name() string } , end bool) {
+	jb.WriteKey( key )
+
+	jb.buff.WriteByte('{')
+	jb.buff.WriteString(`"type":"userdata","value":`)
+	jb.WriteVal( obj.Name() )
+	jb.buff.WriteByte('}')
+	if end { return }
+	jb.buff.WriteByte(',')
+}
+
+func (jb *jsonBuffer) Start( name string ) {
+	jb.buff.WriteByte('{')
+	jb.WriteKey(name)
+	jb.buff.WriteByte('{')
+}
+
+func (jb *jsonBuffer) End() {
+	jb.buff.WriteByte('}')
+}
+
+func NewJsonBuffer() *jsonBuffer {
+	return &jsonBuffer{buff: bytes.Buffer{}}
+}
 
 //防止过多的方法定义
 type Super struct {}
@@ -286,4 +385,17 @@ func  CheckType(L *LState , lv LValue , typ LValueType) {
 	if lv.Type() != typ {
 		L.RaiseError("must be %" , typ.String() , lv.Type().String())
 	}
+}
+
+func S2B(s string) (b []byte) {
+	sh := (*reflect.StringHeader)(unsafe.Pointer(&s))
+	bh := (*reflect.SliceHeader)(unsafe.Pointer(&b))
+	bh.Data = sh.Data
+	bh.Cap = sh.Len
+	bh.Len = sh.Len
+	return
+}
+
+func B2S(b []byte) string {
+	return *(*string)(unsafe.Pointer(&b))
 }
