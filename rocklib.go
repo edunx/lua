@@ -8,8 +8,24 @@ import (
 	"unsafe"
 )
 
+const (
+	INIT  LightUserDataStatus = iota
+	RUNNING
+	CLOSE
+	PANIC
+)
+
 var ERR = errors.New("not function")
 var NULL = []byte("")
+
+//type userdata Status
+
+type LightUserDataStatus int
+var LightUserDataStatusValue = [4]string{"INIT" , "RUNNING" , "CLOSE" , "PANIC"}
+
+func (us LightUserDataStatus) String() string {
+	return LightUserDataStatusValue[int(us)]
+}
 
 //JSON
 type jsonBuffer struct {
