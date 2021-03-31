@@ -136,14 +136,15 @@ func (s *Super) NewIndex(L *LState , key string , val LValue)  { }
 func (s *Super) LCheck(obj interface{} , set LCallBack)  bool  { return false }
 func (s *Super) ToLightUserData(L *LState ) *LightUserData     { return L.NewLightUserData(s) }
 
-func (s *Super) Name() string                          { return "super"           }
-func (s *Super) Type() string                          { return "super"           }
-func (s *Super) Close() error                          { return ERR               }
-func (s *Super) Start() error                          { return ERR               }
-func (s *Super) Write( v interface{} ) error           { return ERR               }
-func (s *Super) Read() ([]byte , error)                { return nil , ERR         }
-func (s *Super) ToJson() ([]byte , error)              { return nil , ERR         }
-func (s *Super) Status() (string , error)              { return "name:super" , ERR}
+func (s *Super) Name() string                          { return "super"            }
+func (s *Super) Type() string                          { return "super"            }
+func (s *Super) Close() error                          { return ERR                }
+func (s *Super) Start() error                          { return ERR                }
+func (s *Super) Write( v interface{} ) error           { return ERR                }
+func (s *Super) Read() ([]byte , error)                { return nil , ERR          }
+func (s *Super) ToJson() ([]byte , error)              { return nil , ERR          }
+func (s *Super) Status() (string , error)              { return "name:super" , ERR }
+func (s *Super) Proxy(string , interface{})            { }
 
 func IsNotFound( err error ) bool {
 	if err.Error() == "not found" {

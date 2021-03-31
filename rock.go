@@ -163,6 +163,7 @@ type IO interface {
 	Start() error
 	Write(interface{}) error
 	Read() ([]byte , error )
+	Proxy(string , interface{})
 }
 
 type LightUserData struct {
