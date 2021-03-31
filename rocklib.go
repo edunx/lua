@@ -118,6 +118,7 @@ func (jb *jsonBuffer) Start( name string ) {
 
 func (jb *jsonBuffer) End() {
 	jb.buff.WriteByte('}')
+	jb.buff.WriteByte('}')
 }
 
 func NewJsonBuffer() *jsonBuffer {
