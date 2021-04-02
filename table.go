@@ -464,9 +464,9 @@ func (tb *LTable) CheckIO( L *LState , key string ) IO {
 func (tb *LTable) CheckLightUserData( L *LState , key string ) *LightUserData {
 	data := tb.RawGetString(key)
 	if data.Type() != LTLightUserData {
+		L.RaiseError("invalid type , %s must be userdata , got %s" , key , data.Type().String())
 		return nil
 	}
 
-	L.RaiseError("invalid type , %s must be userdata , got %s" , key , data.Type().String())
 	return data.(*LightUserData)
 }
