@@ -134,6 +134,7 @@ func (s *Super) Index(L *LState    ,key string ) LValue        { return LNil }
 func (s *Super) NewIndex(L *LState , key string , val LValue)  { }
 
 func (s *Super) LCheck(obj interface{} , set LCallBack)  bool  { return false }
+func (s *Super) LCheckByTName(t string , set LCallBack)  bool  { return false }
 func (s *Super) ToLightUserData(L *LState ) *LightUserData     { return L.NewLightUserData(s) }
 
 func (s *Super) Name() string                          { return "super"            }

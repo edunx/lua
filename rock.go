@@ -138,7 +138,6 @@ func (ukv *UserKV) assertFloat64() (float64, bool)     { return 0, false   }
 func (ukv *UserKV) assertString() (string, bool)       { return "", false  }
 func (ukv *UserKV) assertFunction() (*LFunction, bool) { return nil, false }
 
-
 type LCallBack func( obj interface{} ) //用来回调方法
 
 type rock  interface {
@@ -154,6 +153,7 @@ type rock  interface {
 	NewIndex(*LState   , string , LValue)
 
 	LCheck(interface{} , LCallBack) bool //check(obj interface{}, set func) bool
+	LCheckByTName(string , LCallBack) bool //通过类型名称判断
 	ToLightUserData(*LState) *LightUserData
 }
 
