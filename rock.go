@@ -138,7 +138,7 @@ func (ukv *UserKV) assertFloat64() (float64, bool)     { return 0, false   }
 func (ukv *UserKV) assertString() (string, bool)       { return "", false  }
 func (ukv *UserKV) assertFunction() (*LFunction, bool) { return nil, false }
 
-type LCallBack func( obj interface{} ) //用来回调方法
+type LCallBack func( obj interface{} ) bool //用来回调方法
 
 type rock  interface {
 	Name()     string
